@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Albert Sans', sans-serif; background: #F5F4FF; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+  .section-title { font-size: 10px; font-weight: 600; color: #A8A5C8; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+  .field-group { display: flex; flex-direction: column; gap: 5px; }
+  .label { font-size: 13px; font-weight: 500; color: #6B6880; }
+  .req { color: #E85248; }
+  .input { height: 48px; border-radius: 12px; border: 1.5px solid #E8E6F8; background: white; padding: 0 14px; font-family: 'Albert Sans', sans-serif; font-size: 15px; color: #1A1740; display: flex; align-items: center; }
+  .input.focus { border-color: #A29AFF; box-shadow: 0 0 0 3px rgba(162,154,255,0.18); }
+  .input.error { border-color: #E85248; box-shadow: 0 0 0 3px rgba(232,82,72,0.12); }
+  .input.disabled { background: #F5F4FF; color: #A8A5C8; }
+  .input.mono { font-family: 'JetBrains Mono', monospace; font-size: 14px; letter-spacing: 0.04em; }
+  .helper { font-size: 11px; color: #A8A5C8; }
+  .helper.err { color: #C0281E; }
+  .row { display: flex; gap: 10px; }
+  .row .field-group { flex: 1; }
+  .select { height: 48px; border-radius: 12px; border: 1.5px solid #E8E6F8; background: white; padding: 0 14px; font-size: 15px; color: #1A1740; display: flex; align-items: center; justify-content: space-between; }
+  .checkbox-row { display: flex; align-items: flex-start; gap: 10px; }
+  .cb-box { width: 20px; height: 20px; border-radius: 6px; background: linear-gradient(135deg,#A29AFF,#E66BFF); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .cb-box.un { background: white; border: 1.5px solid #D0CEFF; }
+  .cb-text { font-size: 13px; color: #4A4760; line-height: 1.4; }
+</style>
+</head>
+<body>
+  <div class="section-title">Input states</div>
+  <div class="row">
+    <div class="field-group">
+      <div class="label">First Name<span class="req">*</span></div>
+      <div class="input">Rahul</div>
+    </div>
+    <div class="field-group">
+      <div class="label">Last Name<span class="req">*</span></div>
+      <div class="input" style="color:#A8A5C8">Sharma</div>
+    </div>
+  </div>
+  <div class="field-group">
+    <div class="label">Email<span class="req">*</span></div>
+    <div class="input focus">rahul@example.com</div>
+    <div class="helper">Used as your login ID</div>
+  </div>
+  <div class="field-group">
+    <div class="label">PAN Number<span class="req">*</span></div>
+    <div class="input error mono">ABCDE123</div>
+    <div class="helper err">Invalid PAN format. Expected: ABCDE1234F</div>
+  </div>
+  <div class="field-group">
+    <div class="label">Year of Study</div>
+    <div class="select"><span>2nd Year</span><span style="color:#A8A5C8;font-size:12px">▾</span></div>
+  </div>
+  <div class="field-group">
+    <div class="label">Account Number<span class="req">*</span></div>
+    <div class="input disabled mono">•••• •••• 4521</div>
+    <div class="helper">Masked for security</div>
+  </div>
+  <div class="section-title">Checkboxes</div>
+  <div class="checkbox-row">
+    <div class="cb-box">
+      <svg width="11" height="9" viewBox="0 0 12 10" fill="none"><path d="M1 5L4.5 8.5L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="cb-text">I confirm the bank account, IFSC code and PAN belong to me.</div>
+  </div>
+  <div class="checkbox-row" style="margin-top:4px">
+    <div class="cb-box un"></div>
+    <div class="cb-text" style="color:#A8A5C8">I agree to the Terms and Conditions</div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Albert Sans', sans-serif; background: #F5F4FF; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+  .card { background: white; border-radius: 14px; padding: 18px 22px; box-shadow: 0 1px 6px rgba(100,80,200,0.09); }
+  .role { font-size: 10px; font-weight: 600; color: #A8A5C8; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+  .row { display: flex; align-items: baseline; gap: 12px; }
+  .meta { font-size: 11px; color: #A8A5C8; font-family: monospace; }
+
+  .pts-hero   { font-size: 48px; font-weight: 800; line-height: 1.05; letter-spacing: -0.025em; background: linear-gradient(135deg,#A29AFF,#E66BFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .pts-medium { font-size: 32px; font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; }
+  .screen-title { font-size: 24px; font-weight: 700; color: #1A1740; }
+  .section-head { font-size: 20px; font-weight: 600; color: #1A1740; }
+  .gradient-text { background: linear-gradient(135deg,#91C6FF,#A29AFF,#E66BFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="role">Display — Hero points (48px / 800) — Gradient fill</div>
+    <div class="row">
+      <div class="pts-hero">1,24,500</div>
+      <div class="meta">pts</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="role">Display — Points delta (32px / 700) — awarded</div>
+    <div class="row">
+      <div class="pts-medium" style="color:#7DBF9E">+2,500</div>
+      <div class="meta">pts awarded</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="role">Display — Points delta (32px / 700) — redeemed</div>
+    <div class="row">
+      <div class="pts-medium" style="color:#D4807A">−500</div>
+      <div class="meta">pts used</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="role">Screen title (24px / 700)</div>
+    <div class="screen-title">Dashboard</div>
+  </div>
+  <div class="card">
+    <div class="role">Section heading (20px / 600) — Gradient</div>
+    <div class="section-head gradient-text">Expiring soon</div>
+  </div>
+  <div class="card" style="background:linear-gradient(150deg,#91C6FF,#A29AFF,#C466E8)">
+    <div class="role" style="color:rgba(255,255,255,0.6)">Heading on gradient bg</div>
+    <div style="font-size:24px;font-weight:700;color:white">Your balance</div>
+    <div style="font-size:42px;font-weight:800;color:white;letter-spacing:-0.025em;line-height:1.05">1,24,500</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.65);margin-top:4px">points · ≈ ₹1,24,500</div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Albert Sans', sans-serif; background: #F5F4FF; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+  .section-title { font-size: 10px; font-weight: 600; color: #A8A5C8; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .chip { font-size: 13px; font-weight: 600; padding: 4px 12px; border-radius: 999px; }
+  .tag { font-size: 12px; font-weight: 500; padding: 5px 12px; border-radius: 4px; border: 1.5px solid; }
+</style>
+</head>
+<body>
+  <div>
+    <div class="section-title">Status Badges</div>
+    <div class="row">
+      <span class="badge" style="background:#F0FBF3;color:#1A8C3C"><span class="dot" style="background:#34C759"></span>Completed</span>
+      <span class="badge" style="background:#F3F2FF;color:#7B72E8"><span class="dot" style="background:#A29AFF"></span>Pending</span>
+      <span class="badge" style="background:#FFF2F1;color:#C0281E"><span class="dot" style="background:#E85248"></span>Rejected</span>
+      <span class="badge" style="background:#FFF6F5;color:#E85248"><span class="dot" style="background:#FFA29B"></span>Expiring</span>
+    </div>
+  </div>
+
+  <div>
+    <div class="section-title">Point Delta Chips</div>
+    <div class="row">
+      <span class="chip" style="background:#F0FBF3;color:#1A8C3C">+2,500 pts</span>
+      <span class="chip" style="background:#FFF2F1;color:#C0281E">−500 pts</span>
+      <span class="chip" style="background:linear-gradient(135deg,#A29AFF,#E66BFF);color:white">+10,000 pts</span>
+    </div>
+  </div>
+
+  <div>
+    <div class="section-title">Filter / Tab Tags</div>
+    <div class="row">
+      <span class="tag" style="background:linear-gradient(135deg,#A29AFF,#E66BFF);color:white;border-color:transparent">All</span>
+      <span class="tag" style="background:white;color:#6B6880;border-color:#E8E6F8">eGift</span>
+      <span class="tag" style="background:white;color:#6B6880;border-color:#E8E6F8">Bank transfer</span>
+      <span class="tag" style="background:white;color:#6B6880;border-color:#E8E6F8">Earned</span>
+    </div>
+  </div>
+
+  <div>
+    <div class="section-title">Type Tags</div>
+    <div class="row">
+      <span class="tag" style="background:#FDF2FF;color:#A830C4;border-color:#F0AEFF">eGift Card</span>
+      <span class="tag" style="background:#EFF7FF;color:#1A6FC5;border-color:#AED8FF">Bank Transfer</span>
+      <span class="tag" style="background:#F3F2FF;color:#7B72E8;border-color:#D0CEFF">Points Awarded</span>
+    </div>
+  </div>
+</body>
+</html>

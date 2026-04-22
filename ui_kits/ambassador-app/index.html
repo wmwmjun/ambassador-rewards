@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GliaCircle Ambassador — UI Kit</title>
+<link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; font-family: 'Albert Sans', sans-serif; }
+body { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #E8E6F8; }
+
+.phone-shell {
+  width: 390px; height: 844px;
+  background: #F5F4FF;
+  border-radius: 44px;
+  border: 1px solid #D0CEFF;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Status bar */
+.status-bar {
+  height: 48px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0 28px 8px;
+  flex-shrink: 0;
+  background: transparent;
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  z-index: 10;
+}
+.status-time { font-size: 15px; font-weight: 600; color: white; }
+.status-icons { display: flex; gap: 6px; align-items: center; }
+
+/* Content area */
+.screen-wrap { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+.screen { flex: 1; overflow-y: auto; overflow-x: hidden; }
+.screen::-webkit-scrollbar { display: none; }
+
+/* Bottom nav */
+.bottom-nav {
+  background: white;
+  height: 80px;
+  display: flex;
+  align-items: flex-start;
+  padding-top: 10px;
+  flex-shrink: 0;
+  border-top: 1px solid #E8E6F8;
+}
+.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; padding: 4px 0; }
+.nav-dot { width: 4px; height: 4px; border-radius: 50%; margin-top: 2px; }
+.nav-label { font-size: 10px; font-weight: 600; color: #A8A5C8; }
+.nav-active .nav-label { color: #7B72E8; }
+
+/* Page */
+.page { padding: 16px 16px 24px; display: flex; flex-direction: column; gap: 14px; }
+.card { background: white; border-radius: 18px; border: 1px solid #E8E6F8; }
+.section-label { font-size: 11px; font-weight: 600; color: #A8A5C8; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 10px; }
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 999px; font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+
+/* Animations */
+.screen-enter { animation: fadeUp 0.22s ease-out; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Modal */
+.modal-overlay { position: absolute; inset: 0; background: rgba(26,23,64,0.55); backdrop-filter: blur(6px); display: flex; align-items: flex-end; z-index: 100; animation: fadeIn 0.2s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.modal-sheet { width: 100%; background: white; border-radius: 24px 24px 0 0; padding: 20px 20px 44px; animation: slideUp 0.25s ease-out; }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.modal-handle { width: 36px; height: 4px; background: #E8E6F8; border-radius: 999px; margin: 0 auto 20px; }
+
+/* Gradient text */
+.grad-text { background: linear-gradient(135deg, #A29AFF, #E66BFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+/* Gradient bg */
+.grad-btn { background: linear-gradient(135deg, #A29AFF, #E66BFF); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useCallback } = React;
+
+// ─── MOCK DATA ────────────────────────────────────────────────
+const MOCK_BALANCE = { current: 124500, earned: 140000, used: 15500, expiring: 800 };
+const MOCK_EXPIRY = [
+  { pts: 500, date: "30 Jun 2026", days: 26 },
+  { pts: 300, date: "10 Jul 2026", days: 36 },
+  { pts: 10000, date: "14 Jan 2027", days: 207 },
+];
+const MOCK_HISTORY = [
+  { id: 1, type: "egift", title: "Amazon eGift Card", date: "28 Feb 2026", pts: -500, status: "completed", code: "AMZN-7X4K-9P2M" },
+  { id: 2, type: "award", title: "Points awarded", date: "10 Feb 2026", pts: 2500, status: "completed" },
+  { id: 3, type: "bank", title: "Bank transfer", date: "15 Jan 2026", pts: -50000, status: "rejected" },
+  { id: 4, type: "egift", title: "Flipkart eGift Card", date: "28 Dec 2025", pts: -1000, status: "completed", code: "FK-X92K-7TP4" },
+  { id: 5, type: "award", title: "Points awarded", date: "10 Dec 2025", pts: 5000, status: "completed" },
+  { id: 6, type: "award", title: "Points awarded", date: "15 Nov 2025", pts: 8000, status: "completed" },
+  { id: 7, type: "bank", title: "Bank transfer", date: "1 Nov 2025", pts: -75000, status: "completed" },
+];
+const EGIFTS = [
+  { id: "amz", name: "Amazon", label: "Amazon Gift Card", cat: "Shopping", range: "₹500 – ₹10,000", bg: "#000", fg: "#FF9900", values: [500,1000,2000,5000,10000], terms: "Valid for 10 years. Redeemable on Amazon.in." },
+  { id: "flip", name: "Flipkart", label: "Flipkart Gift Card", cat: "Shopping", range: "₹500 – ₹5,000", bg: "#2874F0", fg: "#fff", values: [500,1000,2000,5000], terms: "Valid for 1 year. Redeemable on Flipkart.com." },
+  { id: "netflix", name: "NETFLIX", label: "Netflix Gift Card", cat: "Entertainment", range: "₹500 – ₹3,000", bg: "#141414", fg: "#E50914", values: [500,1000,2000,3000], terms: "Valid until redeemed. One card per account." },
+  { id: "swiggy", name: "Swiggy", label: "Swiggy Gift Card", cat: "Shopping", range: "₹200 – ₹2,000", bg: "#FC8019", fg: "#fff", values: [200,500,1000,2000], terms: "Valid for 1 year. Redeemable on Swiggy app." },
+  { id: "spotify", name: "Spotify", label: "Spotify Premium", cat: "Entertainment", range: "₹119 – ₹1,189", bg: "#1DB954", fg: "#fff", values: [119,179,349,1189], terms: "Redeemable for Spotify Premium subscription." },
+  { id: "uber", name: "Uber", label: "Uber Gift Card", cat: "Shopping", range: "₹250 – ₹2,000", bg: "#000", fg: "#fff", values: [250,500,1000,2000], terms: "Redeemable on Uber and Uber Eats. Valid for 1 year." },
+];
+const MOCK_BANK = { name: "Rahul Sharma", bank: "State Bank of India", account: "•••• •••• 4521", ifsc: "SBIN0001234" };
+
+// ─── ICONS ────────────────────────────────────────────────────
+const Icon = ({ name, size = 22, color = "currentColor", sw = 1.8 }) => {
+  const d = {
+    dashboard: <><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></>,
+    gift: <><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5" rx="1"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></>,
+    user: <><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></>,
+    wallet: <><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/></>,
+    bank: <><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></>,
+    check: <><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></>,
+    copy: <><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></>,
+    card: <><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></>,
+    edit: <><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></>,
+    alert: <><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></>,
+  };
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">{d[name]}</svg>;
+};
+
+// ─── STATUS BADGE ─────────────────────────────────────────────
+const StatusBadge = ({ status }) => {
+  const cfg = {
+    completed: { bg: "#F0FBF3", color: "#1A8C3C", label: "Completed" },
+    pending:   { bg: "#F3F2FF", color: "#7B72E8", label: "Pending" },
+    rejected:  { bg: "#FFF2F1", color: "#C0281E", label: "Rejected" },
+  }[status] || {};
+  return <span className="badge" style={{ background: cfg.bg, color: cfg.color }}>{cfg.label}</span>;
+};
+
+// ─── GRADIENT AVATAR ──────────────────────────────────────────
+const Avatar = ({ initial, size = 40 }) => (
+  <div style={{ width: size, height: size, borderRadius: "50%", background: "linear-gradient(135deg,#91C6FF,#A29AFF,#E66BFF)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, color: "white", fontSize: size * 0.38, flexShrink: 0 }}>{initial}</div>
+);
+
+// ─── DASHBOARD ────────────────────────────────────────────────
+const DashboardScreen = ({ onNavigate }) => (
+  <div className="screen screen-enter">
+    {/* Gradient header */}
+    <div style={{ background: "linear-gradient(150deg,#91C6FF 0%,#A29AFF 50%,#C466E8 100%)", padding: "60px 20px 28px", position: "relative" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 22 }}>
+        <div>
+          <div style={{ fontSize: 13, color: "rgba(255,255,255,0.7)", fontWeight: 500 }}>Good morning,</div>
+          <div style={{ fontSize: 22, fontWeight: 700, color: "white" }}>Rahul</div>
+        </div>
+        <Avatar initial="R" size={42} />
+      </div>
+      {/* Balance card embedded in header */}
+      <div style={{ background: "rgba(255,255,255,0.18)", backdropFilter: "blur(12px)", borderRadius: 20, padding: "18px 20px", border: "1px solid rgba(255,255,255,0.3)" }}>
+        <div style={{ fontSize: 12, color: "rgba(255,255,255,0.65)", marginBottom: 3, fontWeight: 500 }}>Your balance</div>
+        <div style={{ fontSize: 44, fontWeight: 800, color: "white", letterSpacing: "-0.025em", lineHeight: 1 }}>60,000</div>
+        <div style={{ fontSize: 13, color: "rgba(255,255,255,0.55)", marginTop: 3 }}>points · ≈ ₹60,000</div>
+        {/* Expiry alert */}
+        <div style={{ marginTop: 12, background: "rgba(255,255,255,0.2)", borderRadius: 10, padding: "8px 14px", display: "flex", alignItems: "center", gap: 8 }}>
+          <Icon name="alert" size={14} color="rgba(255,255,255,0.9)" />
+          <span style={{ fontSize: 12, color: "rgba(255,255,255,0.9)", fontWeight: 600 }}>800 pts expiring within 30 days</span>
+        </div>
+      </div>
+    </div>
+
+    <div className="page">
+      {/* Stats */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
+        {[
+          { label: "Total earned", val: "68,000", grad: false },
+          { label: "Used", val: "8,000", grad: false },
+          { label: "Expiring", val: "800", grad: true },
+        ].map(s => (
+          <div key={s.label} className="card" style={{ padding: "12px 14px" }}>
+            <div style={{ fontSize: 11, color: "#6B6880", marginBottom: 4 }}>{s.label}</div>
+            <div style={{ fontSize: 17, fontWeight: 700, letterSpacing: "-0.01em", ...(s.grad ? { background: "linear-gradient(135deg,#E66BFF,#FFA29B)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" } : { color: "#1A1740" }) }}>{s.val}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* CTA */}
+      <button onClick={() => onNavigate("redeem")} style={{ width: "100%", height: 52, borderRadius: 999, border: "none", background: "linear-gradient(135deg,#A29AFF,#E66BFF)", color: "white", fontSize: 16, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+        <Icon name="gift" size={20} color="white" />
+        Redeem points
+      </button>
+
+      {/* Expiry */}
+      <div>
+        <div className="section-label">Expiring soon</div>
+        <div className="card" style={{ overflow: "hidden" }}>
+          {MOCK_EXPIRY.map((e, i) => (
+            <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 18px", borderTop: i > 0 ? "1px solid #F5F4FF" : "none" }}>
+              <span style={{ fontSize: 15, fontWeight: 700, color: "#1A1740" }}>{e.pts.toLocaleString()} pts</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ fontSize: 12, color: "#A8A5C8" }}>Expires {e.date}</span>
+
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Recent */}
+      <div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+          <div className="section-label" style={{ marginBottom: 0 }}>Recent activity</div>
+          <button onClick={() => onNavigate("history")} style={{ fontSize: 13, fontWeight: 600, background: "linear-gradient(135deg,#A29AFF,#E66BFF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", border: "none", cursor: "pointer", fontFamily: "inherit" }}>See all</button>
+        </div>
+        <div className="card" style={{ overflow: "hidden" }}>
+          {MOCK_HISTORY.slice(0, 5).map((h, i) => <TxRow key={h.id} item={h} first={i === 0} />)}
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+// ─── TX ROW ───────────────────────────────────────────────────
+const txStyle = {
+  egift: { bg: "#FDF2FF", icon: "card", color: "#A830C4" },
+  award: { bg: "#F3F2FF", icon: "wallet", color: "#7B72E8" },
+  bank:  { bg: "#EFF7FF", icon: "bank", color: "#1A6FC5" },
+};
+const TxRow = ({ item, first, onClick, expanded }) => {
+  const s = txStyle[item.type];
+  return (
+    <div>
+      <div onClick={onClick} style={{ display: "flex", alignItems: "center", padding: "13px 16px", gap: 12, borderTop: first ? "none" : "1px solid #F5F4FF", cursor: onClick ? "pointer" : "default" }}>
+        <div style={{ width: 38, height: 38, borderRadius: 11, background: s.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+          <Icon name={s.icon} size={18} color={s.color} />
+        </div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: 14, fontWeight: 600, color: "#1A1740", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.title}</div>
+          <div style={{ fontSize: 11, color: "#A8A5C8", marginTop: 2 }}>{item.date}</div>
+        </div>
+        <div style={{ textAlign: "right", flexShrink: 0 }}>
+          <div style={{ fontSize: 15, fontWeight: 700, color: item.pts > 0 ? "#1A8C3C" : "#C0281E" }}>{item.pts > 0 ? "+" : ""}{item.pts.toLocaleString()}</div>
+          <StatusBadge status={item.status} />
+        </div>
+      </div>
+      {expanded && item.code && (
+        <div style={{ background: "#F5F4FF", padding: "10px 16px 14px", borderTop: "1px solid #F5F4FF" }}>
+          <div style={{ fontSize: 11, color: "#6B6880", marginBottom: 5 }}>Gift code</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <span style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 14, fontWeight: 500, color: "#1A1740", letterSpacing: "0.04em" }}>{item.code}</span>
+            <button style={{ padding: "5px 10px", borderRadius: 7, background: "linear-gradient(135deg,#A29AFF,#E66BFF)", border: "none", color: "white", fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 4 }}>
+              <Icon name="copy" size={12} color="white" /> Copy
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ─── REDEEM ───────────────────────────────────────────────────
+const RedeemScreen = ({ onNavigate }) => {
+  const [tab, setTab] = useState("egift");
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("All");
+  const [detail, setDetail] = useState(null);
+  const [selVal, setSelVal] = useState(null);
+  const [modal, setModal] = useState(null);
+  const [bankAmt, setBankAmt] = useState("");
+
+  const cats = ["All", "Shopping", "Entertainment"];
+  const filtered = EGIFTS.filter(g =>
+    (category === "All" || g.cat === category) &&
+    g.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const openDetail = (g) => { setDetail(g); setSelVal(g.values[0]); };
+
+  if (detail) return (
+    <div className="screen screen-enter">
+      {/* Card hero */}
+      <div style={{ background: detail.bg, height: 180, display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
+        <div style={{ position: "absolute", top: 48, left: 16 }}>
+          <button onClick={() => setDetail(null)} style={{ background: "rgba(255,255,255,0.15)", border: "none", borderRadius: 999, padding: "5px 14px", color: "white", fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>‹ Back</button>
+        </div>
+        <div style={{ fontSize: 36, fontWeight: 900, color: detail.fg, letterSpacing: detail.id === "amz" ? "-0.02em" : "0" }}>{detail.name}</div>
+      </div>
+
+      <div className="page">
+        <div className="card" style={{ padding: "16px 18px" }}>
+          <div style={{ fontSize: 18, fontWeight: 700, color: "#1A1740" }}>{detail.label}</div>
+          <div style={{ fontSize: 13, color: "#A8A5C8", marginTop: 2 }}>{detail.cat} · India</div>
+        </div>
+
+        <div className="card" style={{ padding: "16px 18px" }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: "#A8A5C8", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 10 }}>Select value</div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+            {detail.values.map(v => (
+              <button key={v} onClick={() => setSelVal(v)} style={{ padding: "8px 16px", borderRadius: 999, border: selVal === v ? "2px solid #A29AFF" : "1.5px solid #E8E6F8", background: selVal === v ? "#F3F2FF" : "white", color: selVal === v ? "#7B72E8" : "#1A1740", fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
+                ₹{v.toLocaleString("en-IN")}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="card" style={{ padding: "14px 18px" }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: "#A8A5C8", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 6 }}>Terms</div>
+          <div style={{ fontSize: 13, color: "#6B6880", lineHeight: 1.5 }}>{detail.terms}</div>
+        </div>
+
+        <button onClick={() => setModal("egift-confirm")} style={{ width: "100%", height: 52, borderRadius: 999, border: "none", background: "linear-gradient(135deg,#A29AFF,#E66BFF)", color: "white", fontSize: 16, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
+          Redeem for ₹{selVal ? selVal.toLocaleString("en-IN") : ""}
+        </button>
+      </div>
+
+      {modal === "egift-confirm" && (
+        <div className="modal-overlay" onClick={() => setModal(null)}>
+          <div className="modal-sheet" onClick={e => e.stopPropagation()}>
+            <div className="modal-handle"></div>
+            <div style={{ fontSize: 18, fontWeight: 700, color: "#1A1740", marginBottom: 4 }}>Confirm redemption</div>
+            <div style={{ fontSize: 14, color: "#6B6880", marginBottom: 18 }}>Redeeming {detail.label} for ₹{selVal?.toLocaleString("en-IN")}.</div>
+            <div style={{ background: "#F5F4FF", borderRadius: 14, padding: "14px 16px", marginBottom: 18, display: "flex", flexDirection: "column", gap: 8 }}>
+              <div style={{ display: "flex", justifyContent: "space-between" }}><span style={{ fontSize: 13, color: "#6B6880" }}>Gift card</span><span style={{ fontSize: 14, fontWeight: 600, color: "#1A1740" }}>{detail.label}</span></div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}><span style={{ fontSize: 13, color: "#6B6880" }}>Value</span><span style={{ fontSize: 14, fontWeight: 700, color: "#1A1740" }}>₹{selVal?.toLocaleString("en-IN")}</span></div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}><span style={{ fontSize: 13, color: "#6B6880" }}>Points deducted</span><span style={{ fontSize: 14, fontWeight: 700, color: "#E66BFF" }}>−{selVal} pts</span></div>
+            </div>
+            <button onClick={() => setModal("egift-success")} style={{ width: "100%", height: 52, borderRadius: 999, border: "none", background: "linear-gradient(135deg,#A29AFF,#E66BFF)", color: "white", fontSize: 16, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", marginBottom: 10 }}>Confirm</button>
+            <button onClick={() => setModal(null)} style={{ width: "100%", height: 44, borderRadius: 999, border: "1.5px solid #E8E6F8", background: "transparent", color: "#6B6880", fontSize: 15, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>Cancel</button>
+          </div>
+        </div>
+      )}
+      {modal === "egift-success" && (
+        <div className="modal-overlay">
+          <div className="modal-sheet">
+            <div className="modal-handle"></div>
+            <div style={{ textAlign: "center", paddingBottom: 20 }}>
+              <div style={{ width: 64, height: 64, borderRadius: "50%", background: "linear-gradient(135deg,#A29AFF,#E66BFF)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px" }}>
+                <Icon name="check" size={28} color="white" />
+              </div>
+              <div style={{ fontSize: 20, fontWeight: 700, color: "#1A1740", marginBottom: 6 }}>Gift card issued!</div>
+              <div style={{ fontSize: 14, color: "#6B6880", marginBottom: 20 }}>Sent to rahul.sharma@example.com</div>
+            </div>
+            <div style={{ background: "#F5F4FF", borderRadius: 14, padding: "14px 16px", marginBottom: 20 }}>
+              <div style={{ fontSize: 12, color: "#6B6880", marginBottom: 6, fontWeight: 500 }}>Your gift code</div>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+                <span style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 15, fontWeight: 500, color: "#1A1740", letterSpacing: "0.04em" }}>AMZN-7X4K-9P2M</span>
+                <button style={{ padding: "6px 12px", borderRadius: 8, background: "linear-gradient(135deg,#A29AFF,#E66BFF)", border: "none", color: "white", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 4 }}>
+                  <Icon name="copy" size={12} color="white" /> Copy
+                </button>
+              </div>
+            </div>
+            <button onClick={() => { setModal(null); setDetail(null); onNavigate("history"); }} style={{ width: "100%", height: 52, borderRadius: 999, border: "none", background: "#1A1740", color: "white", fontSize: 16, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>View in history</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  return (
+    <div className="screen screen-enter">
+      <div style={{ background: "linear-gradient(150deg,#A29AFF,#E66BFF)", padding: "60px 20px 20px" }}>
+        <div style={{ fontSize: 22, fontWeight: 700, color: "white", marginBottom: 2 }}>Redeem</div>
+        <div style={{ fontSize: 13, color: "rgba(255,255,255,0.65)" }}>Balance: <strong style={{ color: "white" }}>60,000 pts</strong></div>
+      </div>
+
+      <div className="page">
+        {/* Tab */}
+        <div style={{ background: "white", borderRadius: 14, padding: 4, display: "flex", gap: 4, border: "1px solid #E8E6F8" }}>
+          {[["egift","eGift Card"],["bank","Bank Transfer"]].map(([id, label]) => (
+            <button key={id} onClick={() => setTab(id)} style={{ flex: 1, padding: "9px", borderRadius: 10, border: "none", fontFamily: "inherit", fontSize: 13, fontWeight: 600, cursor: "pointer", transition: "all 0.15s", ...(tab === id ? { background: "linear-gradient(135deg,#A29AFF,#E66BFF)", color: "white" } : { background: "transparent", color: "#6B6880" }) }}>
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {tab === "egift" && <>
+          {/* Search */}
+          <div style={{ display: "flex", alignItems: "center", gap: 10, background: "white", borderRadius: 12, padding: "0 14px", border: "1px solid #E8E6F8", height: 44 }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A8A5C8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search brands..." style={{ flex: 1, border: "none", outline: "none", fontSize: 14, fontFamily: "Albert Sans, sans-serif", color: "#1A1740", background: "transparent" }} />
+          </div>
+
+          {/* Category filter */}
+          <div style={{ display: "flex", gap: 8, overflow: "auto" }}>
+            {cats.map(c => (
+              <button key={c} onClick={() => setCategory(c)} style={{ flexShrink: 0, padding: "6px 16px", borderRadius: 999, border: "none", fontFamily: "inherit", fontSize: 13, fontWeight: 600, cursor: "pointer", background: category === c ? "linear-gradient(135deg,#A29AFF,#E66BFF)" : "white", color: category === c ? "white" : "#6B6880", border: category === c ? "none" : "1px solid #E8E6F8" }}>
+                {c}
+              </button>
+            ))}
+          </div>
+
+          {/* Grid */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+            {filtered.map(g => (
+              <div key={g.id} onClick={() => openDetail(g)} style={{ background: "white", borderRadius: 14, overflow: "hidden", border: "1px solid #E8E6F8", cursor: "pointer" }}>
+                <div style={{ background: g.bg, height: 90, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <span style={{ fontSize: 18, fontWeight: 900, color: g.fg, letterSpacing: "-0.01em" }}>{g.name}</span>
+                </div>
+                <div style={{ padding: "10px 12px" }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "#1A1740" }}>{g.label}</div>
+                  <div style={{ fontSize: 11, color: "#A8A5C8", marginTop: 2 }}>{g.range}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>}
+
+        {tab === "bank" && <>
+          <div className="card" style={{ padding: 16 }}>
+            <div style={{ fontSize: 11, color: "#A8A5C8", marginBottom: 4, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase" }}>Linked account</div>
+            <div style={{ fontSize: 15, fontWeight: 600, color: "#1A1740" }}>{MOCK_BANK.name}</div>
+            <div style={{ fontSize: 13, color: "#6B6880" }}>{MOCK_BANK.bank} · {MOCK_BANK.account}</div>
+            <div style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 12, color: "#A8A5C8", marginTop: 2 }}>{MOCK_BANK.ifsc}</div>
+          </div>
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 500, color: "#6B6880", marginBottom: 6 }}>Amount<span style={{ color: "#E85248" }}>*</span></div>
+            <div style={{ display: "flex", alignItems: "center", background: "white", borderRadius: 14, border: "2px solid #A29AFF", overflow: "hidden" }}>
+              <span style={{ padding: "0 14px", fontSize: 20, fontWeight: 700, color: "#A8A5C8" }}>₹</span>
+              <input value={bankAmt} onChange={e => setBankAmt(e.target.value)} placeholder="50,000" style={{ flex: 1, height: 52, border: "none", outline: "none", fontSize: 20, fontWeight: 700, fontFamily: "Albert Sans, sans-serif", color: "#1A1740", background: "transparent", paddingRight: 14 }} />
+            </div>
+            <div style={{ fontSize: 11, color: "#A8A5C8", marginTop: 5 }}>Minimum transfer: ₹50,000</div>
+          </div>
+          <button style={{ width: "100%", height: 52, borderRadius: 999, border: "none", background: "linear-gradient(135deg,#A29AFF,#E66BFF)", color: "white", fontSize: 16, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
+            Apply for transfer
+          </button>
+        </>}
+      </div>
+    </div>
+  );
+};
+
+// ─── HISTORY ─────────────────────────────────────────────────
+const HistoryScreen = () => {
+  const [tab, setTab] = useState("redemptions");
+  const [expanded, setExpanded] = useState(null);
+  const redemptions = MOCK_HISTORY.filter(h => h.type !== "award");
+
+  let bal = 124500;
+  const withBal = [...MOCK_HISTORY].reverse().map(h => { const b = bal; bal -= h.pts; return { ...h, balance: b }; }).reverse();
+
+  return (
+    <div className="screen screen-enter">
+      <div style={{ background: "linear-gradient(150deg,#91C6FF,#A29AFF)", padding: "60px 20px 24px" }}>
+        <div style={{ fontSize: 22, fontWeight: 700, color: "white" }}>History</div>
+      </div>
+      <div className="page">
+        <div style={{ background: "white", borderRadius: 14, padding: 4, display: "flex", gap: 4, border: "1px solid #E8E6F8" }}>
+          {[["redemptions","Redemptions"],["points","Point history"]].map(([id, label]) => (
+            <button key={id} onClick={() => setTab(id)} style={{ flex: 1, padding: "9px", borderRadius: 10, border: "none", fontFamily: "inherit", fontSize: 13, fontWeight: 600, cursor: "pointer", transition: "all 0.15s", ...(tab === id ? { background: "linear-gradient(135deg,#A29AFF,#E66BFF)", color: "white" } : { background: "transparent", color: "#6B6880" }) }}>
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {tab === "redemptions" && (
+          <div className="card" style={{ overflow: "hidden" }}>
+            {redemptions.map((h, i) => (
+              <TxRow key={h.id} item={h} first={i === 0} onClick={() => setExpanded(expanded === h.id ? null : h.id)} expanded={expanded === h.id} />
+            ))}
+          </div>
+        )}
+
+        {tab === "points" && (
+          <div style={{ background: "white", borderRadius: 18, overflow: "hidden", border: "1px solid #E8E6F8" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr auto auto", padding: "10px 14px", borderBottom: "1px solid #F5F4FF", gap: 8 }}>
+              {["Date","Description","Pts","Bal"].map(h => <div key={h} style={{ fontSize: 10, fontWeight: 600, color: "#A8A5C8", letterSpacing: "0.06em", textTransform: "uppercase" }}>{h}</div>)}
+            </div>
+            {withBal.map((h, i) => (
+              <div key={h.id} style={{ display: "grid", gridTemplateColumns: "1fr 2fr auto auto", padding: "11px 14px", gap: 8, borderTop: i > 0 ? "1px solid #F5F4FF" : "none", alignItems: "center" }}>
+                <div style={{ fontSize: 11, color: "#A8A5C8" }}>{h.date.split(" ").slice(0,2).join(" ")}</div>
+                <div style={{ fontSize: 12, fontWeight: 500, color: "#1A1740", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{h.title}</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: h.pts > 0 ? "#1A8C3C" : "#C0281E", textAlign: "right" }}>{h.pts > 0 ? "+" : ""}{h.pts.toLocaleString()}</div>
+                <div style={{ fontSize: 12, color: "#1A1740", textAlign: "right", fontWeight: 500 }}>{h.balance.toLocaleString()}</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// ─── PROFILE ─────────────────────────────────────────────────
+const ProfileScreen = () => {
+  const [tab, setTab] = useState("info");
+  const [photo, setPhoto] = useState(null);
+  const [bankEditing, setBankEditing] = useState(false);
+  const [bankSaved, setBankSaved] = useState(false);
+  const [bank, setBank] = useState({ name: "Rahul Sharma", bankName: "State Bank of India", account: "•••• •••• 4521", ifsc: "SBIN0001234" });
+  const [bankDraft, setBankDraft] = useState({ ...bank });
+
+  const handlePhotoChange = (e) => { const f = e.target.files[0]; if (f) setPhoto(URL.createObjectURL(f)); };
+  const startBankEdit = () => { setBankDraft({ ...bank }); setBankEditing(true); setBankSaved(false); };
+  const completeBankEdit = () => { setBank({ ...bankDraft }); setBankEditing(false); setBankSaved(true); setTimeout(() => setBankSaved(false), 2000); };
+  const cancelBankEdit = () => { setBankDraft({ ...bank }); setBankEditing(false); };
+
+  return (
+    <div className="screen screen-enter">
+      <div style={{ background: "linear-gradient(150deg,#A29AFF,#E66BFF,#FFA29B)", padding: "60px 20px 28px" }}>
+        <div style={{ marginBottom: 18 }}>
+          <div style={{ fontSize: 22, fontWeight: 700, color: "white" }}>Profile</div>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+          {/* Tappable photo upload */}
+          <label style={{ cursor: "pointer", position: "relative", flexShrink: 0 }}>
+            <div style={{ width: 56, height: 56, borderRadius: "50%", background: photo ? "transparent" : "rgba(255,255,255,0.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, fontWeight: 800, color: "white", border: "2px solid rgba(255,255,255,0.5)", overflow: "hidden" }}>
+              {photo ? <img src={photo} style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : "R"}
+            </div>
+            <div style={{ position: "absolute", bottom: 0, right: 0, width: 18, height: 18, borderRadius: "50%", background: "white", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#A29AFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </div>
+            <input type="file" accept="image/*" onChange={handlePhotoChange} style={{ display: "none" }} />
+          </label>
+          <div>
+            <div style={{ fontSize: 18, fontWeight: 700, color: "white" }}>Rahul Sharma</div>
+            <div style={{ fontSize: 13, color: "rgba(255,255,255,0.65)" }}>rahul.sharma@example.com</div>
+            <div style={{ marginTop: 5 }}><span className="badge" style={{ background: "rgba(255,255,255,0.25)", color: "white" }}>Delhi University · 3rd Year</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div className="page">
+        <div style={{ background: "white", borderRadius: 14, padding: 4, display: "flex", gap: 4, border: "1px solid #E8E6F8" }}>
+          {[["info","Personal info"],["bank","Bank details"]].map(([id, label]) => (
+            <button key={id} onClick={() => setTab(id)} style={{ flex: 1, padding: "9px", borderRadius: 10, border: "none", fontFamily: "inherit", fontSize: 13, fontWeight: 600, cursor: "pointer", transition: "all 0.15s", ...(tab === id ? { background: "linear-gradient(135deg,#A29AFF,#E66BFF)", color: "white" } : { background: "transparent", color: "#6B6880" }) }}>
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {/* Personal info — read only */}
+        {tab === "info" && (
+          <div className="card" style={{ overflow: "hidden" }}>
+            {[
+              { label: "Email", val: "rahul.sharma@example.com" },
+              { label: "Contact number", val: "+91 98765 43210" },
+              { label: "Date of birth", val: "10 Jun 1996" },
+              { label: "College", val: "Delhi University" },
+              { label: "Year of study", val: "3rd Year" },
+              { label: "PAN number", val: "ABCDE1234F", mono: true },
+            ].map((f, i) => (
+              <div key={f.label} style={{ padding: "13px 18px", borderTop: i > 0 ? "1px solid #F5F4FF" : "none" }}>
+                <div style={{ fontSize: 11, color: "#A8A5C8", fontWeight: 500, marginBottom: 3 }}>{f.label}</div>
+                <div style={{ fontSize: 15, fontWeight: 500, color: "#1A1740", fontFamily: f.mono ? "JetBrains Mono, monospace" : "inherit", letterSpacing: f.mono ? "0.04em" : 0 }}>{f.val}</div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Bank details — editable */}
+        {tab === "bank" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {bankSaved && (
+              <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 16px", background: "#F0FBF3", borderRadius: 12 }}>
+                <Icon name="check" size={15} color="#34C759" />
+                <span style={{ fontSize: 13, color: "#1A8C3C", fontWeight: 600 }}>Bank details updated</span>
+              </div>
+            )}
+            <div className="card" style={{ overflow: "hidden" }}>
+              {[
+                { label: "Beneficiary name", key: "name" },
+                { label: "Bank name", key: "bankName" },
+                { label: "Account number", key: "account", mono: true },
+                { label: "IFSC code", key: "ifsc", mono: true },
+              ].map((f, i) => (
+                <div key={f.label} style={{ padding: "13px 18px", borderTop: i > 0 ? "1px solid #F5F4FF" : "none" }}>
+                  <div style={{ fontSize: 11, color: "#A8A5C8", fontWeight: 500, marginBottom: 4 }}>{f.label}</div>
+                  {bankEditing ? (
+                    <input value={bankDraft[f.key]} onChange={e => setBankDraft(d => ({ ...d, [f.key]: e.target.value }))} style={{ width: "100%", border: "1.5px solid #A29AFF", borderRadius: 8, padding: "8px 12px", fontSize: 15, fontFamily: f.mono ? "JetBrains Mono, monospace" : "Albert Sans, sans-serif", color: "#1A1740", outline: "none", background: "white", WebkitAppearance: "none" }} />
+                  ) : (
+                    <div style={{ fontSize: 15, fontWeight: 500, color: "#1A1740", fontFamily: f.mono ? "JetBrains Mono, monospace" : "inherit", letterSpacing: f.mono ? "0.04em" : 0 }}>{bank[f.key]}</div>
+                  )}
+                </div>
+              ))}
+            </div>
+            {!bankEditing ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                <div style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "12px 16px", background: "#F0FBF3", borderRadius: 12 }}>
+                  <Icon name="check" size={16} color="#34C759" />
+                  <div style={{ fontSize: 12, color: "#1A8C3C", lineHeight: 1.5 }}>Bank account verified and linked for transfers</div>
+                </div>
+                <button onClick={startBankEdit} style={{ width: "100%", height: 48, borderRadius: 999, border: "none", background: "linear-gradient(135deg,#A29AFF,#E66BFF)", color: "white", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                  <Icon name="edit" size={16} color="white" /> Edit bank details
+                </button>
+              </div>
+            ) : (
+              <div style={{ display: "flex", gap: 8 }}>
+                <button onClick={completeBankEdit} style={{ flex: 2, height: 48, borderRadius: 999, border: "none", background: "linear-gradient(135deg,#A29AFF,#E66BFF)", color: "white", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>Complete</button>
+                <button onClick={cancelBankEdit} style={{ flex: 1, height: 48, borderRadius: 999, border: "1.5px solid #E8E6F8", background: "white", color: "#6B6880", fontSize: 15, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>Cancel</button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+// ─── APP SHELL ────────────────────────────────────────────────
+const NAV = [
+  { id: "dashboard", label: "Dashboard", icon: "dashboard" },
+  { id: "redeem",    label: "Redeem",    icon: "gift" },
+  { id: "profile",   label: "Profile",   icon: "user" },
+];
+
+const App = () => {
+  const init = localStorage.getItem("gc_amb_screen") || "dashboard";
+  const [screen, setScreen] = useState(init);
+
+  const navigate = useCallback(s => {
+    setScreen(s);
+    localStorage.setItem("gc_amb_screen", s);
+  }, []);
+
+  const Screens = { dashboard: DashboardScreen, redeem: RedeemScreen, history: HistoryScreen, profile: ProfileScreen };
+  const Active = Screens[screen];
+
+  // Active nav: history maps to dashboard tab
+  const activeNav = screen === "history" ? "dashboard" : screen;
+
+  const navIconColor = (id) => activeNav === id
+    ? "url(#navGrad)"
+    : "#A8A5C8";
+
+  return (
+    <div className="phone-shell">
+      {/* Status bar — on top of gradient header */}
+      <div className="status-bar">
+        <span className="status-time">9:41</span>
+        <div className="status-icons">
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="white" opacity="0.9"><rect x="0" y="3" width="3" height="9" rx="1"/><rect x="4.5" y="2" width="3" height="10" rx="1"/><rect x="9" y="0.5" width="3" height="11.5" rx="1"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" opacity="0.4"/></svg>
+          <svg width="15" height="12" viewBox="0 0 15 12" fill="none" stroke="white" strokeWidth="1.5" opacity="0.9"><path d="M1 4C3.7 1.3 11.3 1.3 14 4"/><path d="M2.9 5.9C4.8 4 10.2 4 12.1 5.9"/><path d="M4.8 7.8C5.9 6.7 9.1 6.7 10.2 7.8"/><circle cx="7.5" cy="10" r="1" fill="white" stroke="none"/></svg>
+          <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="white" strokeOpacity="0.5"/><rect x="2" y="2" width="16" height="8" rx="2" fill="white"/><path d="M23 4v4a2 2 0 0 0 0-4z" fill="white" fillOpacity="0.5"/></svg>
+        </div>
+      </div>
+
+      {/* SVG gradient def for nav icons */}
+      <svg width="0" height="0" style={{ position: "absolute" }}>
+        <defs>
+          <linearGradient id="navGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#A29AFF"/>
+            <stop offset="100%" stopColor="#E66BFF"/>
+          </linearGradient>
+        </defs>
+      </svg>
+
+      {/* Screen */}
+      <div className="screen-wrap">
+        <Active key={screen} onNavigate={navigate} />
+      </div>
+
+      {/* Bottom nav */}
+      <div className="bottom-nav">
+        {NAV.map(n => {
+          const isActive = activeNav === n.id;
+          return (
+            <div key={n.id} className={`nav-item ${isActive ? "nav-active" : ""}`} onClick={() => navigate(n.id)}>
+              <Icon name={n.icon} size={24} color={isActive ? "#7B72E8" : "#A8A5C8"} sw={isActive ? 2 : 1.8} />
+              <span className="nav-label">{n.label}</span>
+              <div className="nav-dot" style={{ background: isActive ? "#A29AFF" : "transparent" }}></div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

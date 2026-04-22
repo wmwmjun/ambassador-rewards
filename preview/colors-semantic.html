@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Albert Sans', sans-serif; background: #F5F4FF; padding: 20px; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .chip { display: flex; align-items: center; border-radius: 10px; overflow: hidden; background: white; box-shadow: 0 1px 6px rgba(100,80,200,0.10); min-width: 210px; }
+  .chip-dot { width: 44px; height: 44px; flex-shrink: 0; }
+  .chip-info { padding: 6px 12px 6px 0; }
+  .chip-name { font-size: 11px; font-weight: 600; color: #1A1740; }
+  .chip-val  { font-size: 10px; color: #6B6880; font-family: monospace; }
+  .section-title { font-size: 10px; font-weight: 600; color: #A8A5C8; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; margin-top: 14px; }
+  .section-title:first-child { margin-top: 0; }
+
+  /* Live badge preview */
+  .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .badge { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+</style>
+</head>
+<body>
+  <div class="section-title">Status Colors — Pastel</div>
+  <div class="row">
+    <div class="chip"><div class="chip-dot" style="background:#A8E6BC"></div><div class="chip-info"><div class="chip-name">Success / Completed</div><div class="chip-val">#A8E6BC · text #3D7A56 · bg #F0FBF5</div></div></div>
+    <div class="chip"><div class="chip-dot" style="background:#FF9AA2"></div><div class="chip-info"><div class="chip-name">Warning / Expiring</div><div class="chip-val">#FF9AA2 · bg #FFF5F6</div></div></div>
+    <div class="chip"><div class="chip-dot" style="background:#FFB3AE"></div><div class="chip-info"><div class="chip-name">Error / Rejected</div><div class="chip-val">#FFB3AE · text #A84040 · bg #FFF2F2</div></div></div>
+    <div class="chip"><div class="chip-dot" style="background:#A29AFF"></div><div class="chip-info"><div class="chip-name">Pending / Info</div><div class="chip-val">#A29AFF (brand purple) · bg #F3F2FF</div></div></div>
+  </div>
+
+  <div class="section-title">Point Deltas — Pastel</div>
+  <div class="row">
+    <div class="chip"><div class="chip-dot" style="background:#B8B4FF"></div><div class="chip-info"><div class="chip-name">Positive / Earned</div><div class="chip-val">#B8B4FF · text #7B72E8</div></div></div>
+    <div class="chip"><div class="chip-dot" style="background:#F0AEFF"></div><div class="chip-info"><div class="chip-name">Negative / Redeemed</div><div class="chip-val">#F0AEFF · text #A830C4</div></div></div>
+  </div>
+
+  <div class="section-title">Semantic Text</div>
+  <div class="row">
+    <div class="chip"><div class="chip-dot" style="background:#1A1740"></div><div class="chip-info"><div class="chip-name">fg-1 Primary</div><div class="chip-val">#1A1740</div></div></div>
+    <div class="chip"><div class="chip-dot" style="background:#6B6880"></div><div class="chip-info"><div class="chip-name">fg-2 Secondary</div><div class="chip-val">#6B6880</div></div></div>
+    <div class="chip"><div class="chip-dot" style="background:#A8A5C8"></div><div class="chip-info"><div class="chip-name">fg-3 Disabled</div><div class="chip-val">#A8A5C8</div></div></div>
+    <div class="chip"><div class="chip-dot" style="background:linear-gradient(135deg,#A29AFF,#E66BFF)"></div><div class="chip-info"><div class="chip-name">fg-accent Gradient</div><div class="chip-val">#A29AFF → #E66BFF</div></div></div>
+  </div>
+
+  <div class="section-title">Semantic Backgrounds</div>
+  <div class="row">
+    <div class="chip"><div class="chip-dot" style="background:#F5F4FF;border:1px solid #E8E6F8"></div><div class="chip-info"><div class="chip-name">bg-app</div><div class="chip-val">#F5F4FF — lavender tint</div></div></div>
+    <div class="chip"><div class="chip-dot" style="background:#FFFFFF;border:1px solid #E8E6F8"></div><div class="chip-info"><div class="chip-name">bg-surface</div><div class="chip-val">#FFFFFF</div></div></div>
+    <div class="chip"><div class="chip-dot" style="background:#F3F2FF;border:1px solid #E8E6F8"></div><div class="chip-info"><div class="chip-name">accent-subtle</div><div class="chip-val">#F3F2FF</div></div></div>
+  </div>
+
+  <div class="section-title">Badge previews</div>
+  <div class="badge-row">
+    <span class="badge" style="background:#F0FBF5;color:#3D7A56"><span class="dot" style="background:#A8E6BC"></span>Completed</span>
+    <span class="badge" style="background:#F3F2FF;color:#7B72E8"><span class="dot" style="background:#A29AFF"></span>Pending</span>
+    <span class="badge" style="background:#FFF2F2;color:#A84040"><span class="dot" style="background:#FFB3AE"></span>Rejected</span>
+    <span class="badge" style="background:#FFF5F6;color:#C04840"><span class="dot" style="background:#FF9AA2"></span>Expiring</span>
+  </div>
+</body>
+</html>

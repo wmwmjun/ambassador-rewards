@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Albert Sans', sans-serif; background: #F5F4FF; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+  .section-title { font-size: 10px; font-weight: 600; color: #A8A5C8; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+
+  /* Bottom nav */
+  .bottom-nav { background: white; border-radius: 20px; padding: 10px 12px 6px; display: flex; justify-content: space-around; align-items: flex-start; border: 1px solid #E8E6F8; }
+  .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 4px 16px; cursor: pointer; }
+  .nav-icon { width: 24px; height: 24px; }
+  .nav-label { font-size: 10px; font-weight: 600; color: #A8A5C8; }
+  .nav-active .nav-label { color: #7B72E8; }
+  .nav-dot { width: 4px; height: 4px; border-radius: 50%; margin-top: 1px; }
+
+  /* Top header */
+  .top-header { background: linear-gradient(150deg,#91C6FF,#A29AFF,#C466E8); border-radius: 16px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; }
+  .header-greeting { font-size: 12px; color: rgba(255,255,255,0.65); font-weight: 500; }
+  .header-name { font-size: 18px; font-weight: 700; color: white; }
+  .avatar { width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,0.25); display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; font-size: 15px; border: 2px solid rgba(255,255,255,0.4); }
+
+  /* Tab bar */
+  .tab-bar { background: white; border-radius: 12px; padding: 4px; display: flex; gap: 4px; box-shadow: 0 2px 10px rgba(100,80,200,0.09); }
+  .tab { flex: 1; padding: 9px; text-align: center; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .tab.active { background: linear-gradient(135deg,#A29AFF,#E66BFF); color: white; }
+  .tab.inactive { color: #6B6880; }
+</style>
+</head>
+<body>
+  <div class="section-title">Gradient header</div>
+  <div class="top-header">
+    <div>
+      <div class="header-greeting">Good morning,</div>
+      <div class="header-name">Rahul</div>
+    </div>
+    <div class="avatar">R</div>
+  </div>
+
+  <div class="section-title">Bottom navigation (3 items)</div>
+  <div class="bottom-nav">
+    <div class="nav-item nav-active">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="#7B72E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/>
+        <rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
+      </svg>
+      <span class="nav-label" style="color:#7B72E8">Dashboard</span>
+      <div class="nav-dot" style="background:#A29AFF"></div>
+    </div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="#A8A5C8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5" rx="1"/>
+        <path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/>
+        <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>
+      </svg>
+      <span class="nav-label">Redeem</span>
+      <div class="nav-dot" style="background:transparent"></div>
+    </div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="#A8A5C8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+      </svg>
+      <span class="nav-label">Profile</span>
+      <div class="nav-dot" style="background:transparent"></div>
+    </div>
+  </div>
+
+  <div class="section-title">Tab bar</div>
+  <div class="tab-bar">
+    <div class="tab active">Redemptions</div>
+    <div class="tab inactive">Point history</div>
+  </div>
+
+  <div class="section-title">Tab bar — alternate</div>
+  <div class="tab-bar">
+    <div class="tab inactive">eGift Card</div>
+    <div class="tab active">Bank Transfer</div>
+  </div>
+</body>
+</html>

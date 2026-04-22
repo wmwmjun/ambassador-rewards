@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Albert Sans', sans-serif; background: #F5F4FF; padding: 20px; }
+  .section-title { font-size: 10px; font-weight: 600; color: #A8A5C8; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; margin-top: 14px; }
+  .section-title:first-child { margin-top: 0; }
+  .grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+  .swatch { border-radius: 10px; overflow: hidden; box-shadow: 0 1px 6px rgba(100,80,200,0.10); min-width: 80px; }
+  .swatch-color { height: 52px; }
+  .swatch-label { background: white; padding: 6px 8px; }
+  .swatch-name { font-size: 11px; font-weight: 600; color: #1A1740; }
+  .swatch-hex  { font-size: 10px; color: #6B6880; font-family: monospace; }
+
+  /* Gradient swatch */
+  .swatch-gradient { height: 52px; background: linear-gradient(135deg, #91C6FF 0%, #A29AFF 40%, #E66BFF 75%, #FFA29B 100%); }
+  .swatch-gradient-2 { height: 52px; background: linear-gradient(135deg, #91C6FF, #A29AFF); }
+  .swatch-gradient-3 { height: 52px; background: linear-gradient(135deg, #A29AFF, #E66BFF); }
+</style>
+</head>
+<body>
+  <div class="section-title">Brand core</div>
+  <div class="grid">
+    <div class="swatch"><div class="swatch-color" style="background:#91C6FF"></div><div class="swatch-label"><div class="swatch-name">Blue</div><div class="swatch-hex">#91C6FF</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#A29AFF"></div><div class="swatch-label"><div class="swatch-name">Purple ★</div><div class="swatch-hex">#A29AFF</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#E66BFF"></div><div class="swatch-label"><div class="swatch-name">Magenta</div><div class="swatch-hex">#E66BFF</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#FFA29B"></div><div class="swatch-label"><div class="swatch-name">Peach</div><div class="swatch-hex">#FFA29B</div></div></div>
+  </div>
+
+  <div class="section-title">Brand gradients</div>
+  <div class="grid">
+    <div class="swatch" style="flex:2"><div class="swatch-gradient"></div><div class="swatch-label"><div class="swatch-name">Full brand</div><div class="swatch-hex">Blue → Purple → Magenta → Peach</div></div></div>
+    <div class="swatch"><div class="swatch-gradient-2"></div><div class="swatch-label"><div class="swatch-name">Header</div><div class="swatch-hex">Blue → Purple</div></div></div>
+    <div class="swatch"><div class="swatch-gradient-3"></div><div class="swatch-label"><div class="swatch-name">CTA</div><div class="swatch-hex">Purple → Magenta</div></div></div>
+  </div>
+
+  <div class="section-title">Purple scale</div>
+  <div class="grid">
+    <div class="swatch"><div class="swatch-color" style="background:#F3F2FF"></div><div class="swatch-label"><div class="swatch-name">50</div><div class="swatch-hex">#F3F2FF</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#E8E7FF"></div><div class="swatch-label"><div class="swatch-name">100</div><div class="swatch-hex">#E8E7FF</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#D0CEFF"></div><div class="swatch-label"><div class="swatch-name">200</div><div class="swatch-hex">#D0CEFF</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#A29AFF"></div><div class="swatch-label"><div class="swatch-name">400 ★</div><div class="swatch-hex">#A29AFF</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#7B72E8"></div><div class="swatch-label"><div class="swatch-name">500</div><div class="swatch-hex">#7B72E8</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#5A52C5"></div><div class="swatch-label"><div class="swatch-name">600</div><div class="swatch-hex">#5A52C5</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#3D3696"></div><div class="swatch-label"><div class="swatch-name">700</div><div class="swatch-hex">#3D3696</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#251D6B"></div><div class="swatch-label"><div class="swatch-name">800</div><div class="swatch-hex">#251D6B</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#1A1740"></div><div class="swatch-label"><div class="swatch-name">900</div><div class="swatch-hex">#1A1740</div></div></div>
+  </div>
+
+  <div class="section-title">Neutral (purple-tinted)</div>
+  <div class="grid">
+    <div class="swatch"><div class="swatch-color" style="background:#F5F4FF; border:1px solid #E8E6F8"></div><div class="swatch-label"><div class="swatch-name">bg-app</div><div class="swatch-hex">#F5F4FF</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#E8E6F8"></div><div class="swatch-label"><div class="swatch-name">border</div><div class="swatch-hex">#E8E6F8</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#A8A5C8"></div><div class="swatch-label"><div class="swatch-name">fg-3</div><div class="swatch-hex">#A8A5C8</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#6B6880"></div><div class="swatch-label"><div class="swatch-name">fg-2</div><div class="swatch-hex">#6B6880</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#1A1740"></div><div class="swatch-label"><div class="swatch-name">fg-1</div><div class="swatch-hex">#1A1740</div></div></div>
+  </div>
+</body>
+</html>

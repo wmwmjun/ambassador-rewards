@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Albert Sans', sans-serif; background: #F5F4FF; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+  .section-title { font-size: 10px; font-weight: 600; color: #A8A5C8; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer; font-family: 'Albert Sans', sans-serif; font-weight: 600; border-radius: 999px; transition: all 0.15s; }
+
+  /* Primary — gradient */
+  .btn-primary { background: linear-gradient(135deg, #A29AFF, #E66BFF); color: white; font-size: 15px; height: 50px; padding: 0 26px; box-shadow: 0 4px 16px rgba(162,154,255,0.4); }
+
+  /* Secondary dark */
+  .btn-dark { background: #1A1740; color: white; font-size: 15px; height: 50px; padding: 0 26px; }
+
+  /* Secondary outline */
+  .btn-outline { background: white; color: #7B72E8; font-size: 15px; height: 50px; padding: 0 26px; border: 1.5px solid #A29AFF; }
+
+  /* Ghost */
+  .btn-ghost { background: #F3F2FF; color: #7B72E8; font-size: 15px; height: 50px; padding: 0 26px; }
+
+  /* Small */
+  .btn-sm { background: linear-gradient(135deg, #A29AFF, #E66BFF); color: white; font-size: 13px; height: 36px; padding: 0 16px; }
+  .btn-sm-outline { background: white; color: #7B72E8; font-size: 13px; height: 36px; padding: 0 16px; border: 1.5px solid #A29AFF; }
+
+  /* Danger */
+  .btn-danger { background: #FFF2F1; color: #C0281E; font-size: 15px; height: 50px; padding: 0 26px; border: 1.5px solid #E85248; }
+
+  /* Disabled */
+  .btn-disabled { background: #E8E6F8; color: #A8A5C8; font-size: 15px; height: 50px; padding: 0 26px; cursor: not-allowed; }
+
+  /* Full width */
+  .btn-full { background: linear-gradient(135deg, #A29AFF, #E66BFF); color: white; font-size: 16px; height: 52px; width: 100%; box-shadow: 0 4px 20px rgba(162,154,255,0.35); }
+</style>
+</head>
+<body>
+  <div>
+    <div class="section-title">Primary CTAs — Gradient</div>
+    <div class="row">
+      <button class="btn btn-primary">Redeem points</button>
+      <button class="btn btn-dark">View history</button>
+    </div>
+  </div>
+  <div>
+    <div class="section-title">Secondary</div>
+    <div class="row">
+      <button class="btn btn-outline">Add bank account</button>
+      <button class="btn btn-ghost">See all</button>
+    </div>
+  </div>
+  <div>
+    <div class="section-title">Small</div>
+    <div class="row">
+      <button class="btn btn-sm">Copy code</button>
+      <button class="btn btn-sm-outline">Filter</button>
+    </div>
+  </div>
+  <div>
+    <div class="section-title">Destructive / Disabled</div>
+    <div class="row">
+      <button class="btn btn-danger">Reject</button>
+      <button class="btn btn-disabled">Submit</button>
+    </div>
+  </div>
+  <div>
+    <div class="section-title">Full-width mobile CTA</div>
+    <button class="btn btn-full">Confirm redemption</button>
+  </div>
+</body>
+</html>
