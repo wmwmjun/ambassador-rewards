@@ -1,0 +1,202 @@
+@import url('https://fonts.googleapis.com/css2?family=Albert+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ── Design Tokens ─────────────────────────────────────────── */
+:root {
+  --font-sans: 'Albert Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+  --color-purple-50:  #F3F2FF;
+  --color-purple-400: #A29AFF;
+  --color-purple-500: #7B72E8;
+
+  --color-gray-100: #F5F4FF;
+  --color-gray-200: #E8E6F8;
+  --color-gray-300: #D0CEEA;
+  --color-gray-400: #A8A5C8;
+  --color-gray-500: #6B6880;
+  --color-gray-800: #1A1740;
+
+  --color-success:    #34C759;
+  --color-success-bg: #F0FBF3;
+  --color-error:      #E85248;
+  --color-error-bg:   #FFF2F1;
+
+  --fg-1:       #1A1740;
+  --fg-2:       #6B6880;
+  --fg-3:       #A8A5C8;
+  --fg-success: #1A8C3C;
+  --fg-error:   #C0281E;
+
+  --bg-app:     #F5F4FF;
+  --bg-surface: #FFFFFF;
+
+  --border-default: #E8E6F8;
+
+  --shadow-md: 0 2px 12px rgba(100,80,200,0.10);
+
+  --radius-lg:   18px;
+  --radius-pill: 999px;
+
+  --bottom-nav-height: 80px;
+}
+
+/* ── Reset ──────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  color: var(--fg-1);
+  background: #E8E6F8;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+/* ── Phone Shell ────────────────────────────────────────────── */
+.phone-shell {
+  width: 390px;
+  height: 844px;
+  background: var(--bg-app);
+  border-radius: 44px;
+  border: 1px solid var(--color-gray-300);
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 64px rgba(100,80,200,0.18);
+}
+
+@media (max-width: 500px) {
+  body {
+    background: var(--bg-app);
+    align-items: flex-start;
+    justify-content: flex-start;
+    min-height: 100dvh;
+  }
+  .phone-shell {
+    width: 100vw;
+    height: 100dvh;
+    height: 100svh;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+  }
+}
+
+/* ── Status Bar ─────────────────────────────────────────────── */
+.status-bar {
+  height: 48px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0 28px 8px;
+  flex-shrink: 0;
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  z-index: 10;
+}
+.status-time { font-size: 15px; font-weight: 600; color: white; }
+.status-icons { display: flex; gap: 6px; align-items: center; }
+
+/* ── Screen Layout ──────────────────────────────────────────── */
+.screen-wrap { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+.screen { flex: 1; overflow-y: auto; overflow-x: hidden; }
+.screen::-webkit-scrollbar { display: none; }
+
+/* ── Bottom Nav ─────────────────────────────────────────────── */
+.bottom-nav {
+  background: white;
+  height: var(--bottom-nav-height);
+  display: flex;
+  align-items: flex-start;
+  padding-top: 10px;
+  flex-shrink: 0;
+  border-top: 1px solid var(--border-default);
+}
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 4px 0;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.nav-dot { width: 4px; height: 4px; border-radius: 50%; margin-top: 2px; }
+.nav-label { font-size: 10px; font-weight: 600; color: var(--fg-3); }
+.nav-active .nav-label { color: var(--color-purple-500); }
+
+/* ── Page / Card ────────────────────────────────────────────── */
+.page { padding: 16px 16px 24px; display: flex; flex-direction: column; gap: 14px; }
+.card { background: white; border-radius: var(--radius-lg); border: 1px solid var(--border-default); }
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--fg-3);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ── Animations ─────────────────────────────────────────────── */
+.screen-enter { animation: fadeUp 0.22s ease-out; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Modal ──────────────────────────────────────────────────── */
+.modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(26,23,64,0.55);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: flex-end;
+  z-index: 100;
+  animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal-sheet {
+  width: 100%;
+  background: white;
+  border-radius: 24px 24px 0 0;
+  padding: 20px 20px 44px;
+  animation: slideUp 0.25s ease-out;
+}
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+.modal-handle {
+  width: 36px;
+  height: 4px;
+  background: var(--border-default);
+  border-radius: var(--radius-pill);
+  margin: 0 auto 20px;
+}
+
+/* ── Shared Utilities ───────────────────────────────────────── */
+.grad-text {
+  background: linear-gradient(135deg, #A29AFF, #E66BFF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
