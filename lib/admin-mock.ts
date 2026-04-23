@@ -9,14 +9,15 @@ export interface PointAward {
 }
 export interface EGiftRequest {
   id: string; userId: string; userName: string; brand: string;
-  amount: number; points: number; status: 'pending' | 'approved' | 'rejected';
+  amount: number; points: number;
+  status: 'completed' | 'failed';
   date: string; giftCode?: string;
 }
 export interface TransferRequest {
   id: string; userId: string; userName: string; bankName: string;
   account: string; ifsc: string; amount: number;
-  status: 'pending' | 'approved' | 'transferred' | 'rejected';
-  date: string; approvedBy?: string;
+  status: 'transferred' | 'failed';
+  date: string;
 }
 export interface AdminProduct {
   id: string; name: string; brand: string; category: string;
@@ -27,6 +28,13 @@ export interface AuditEntry {
   details: string; date: string;
   type: 'points' | 'approval' | 'user' | 'product' | 'csv';
 }
+export interface RegistrationRequest {
+  id: string; firstName: string; lastName: string; email: string;
+  contact: string; college: string; year: string; pan: string;
+  submittedDate: string;
+  status: 'pending' | 'approved' | 'rejected';
+  rejectionReason?: string;
+}
 
 export const ADMIN_STATS = {
   totalUsers: 1243,
@@ -35,12 +43,11 @@ export const ADMIN_STATS = {
   lifetimeEarned: 1_25_00_000,
   consumedPoints: 32_50_000,
   expiredPoints: 5_00_000,
-  allowanceBankTransfer: 50_00_000,
-  allowanceGiftCard: 20_00_000,
+  walletBankTransfer: 50_00_000,
+  walletGiftCard: 20_00_000,
   monthlyAwarded: 4_20_000,
   monthlyRedeemed: 1_85_000,
-  pendingBankTransfers: 7,
-  pendingEGift: 12,
+  pendingRegistrations: 5,
 };
 
 export const ADMIN_USERS: AdminUser[] = [
@@ -70,47 +77,58 @@ export const POINT_AWARDS: PointAward[] = [
 ];
 
 export const EGIFT_REQUESTS: EGiftRequest[] = [
-  { id: 'EG001', userId: 'U001', userName: 'Rahul Sharma',    brand: 'Amazon',   amount: 500,  points: 500,  status: 'completed' as any, date: '28 Feb 2026', giftCode: 'AMZN-7X4K-9P2M' },
-  { id: 'EG002', userId: 'U003', userName: 'Arjun Nair',      brand: 'Flipkart', amount: 2000, points: 2000, status: 'pending',   date: '27 Feb 2026' },
-  { id: 'EG003', userId: 'U007', userName: 'Rohit Mehta',     brand: 'Netflix',  amount: 1000, points: 1000, status: 'pending',   date: '26 Feb 2026' },
-  { id: 'EG004', userId: 'U002', userName: 'Priya Patel',     brand: 'Swiggy',   amount: 500,  points: 500,  status: 'approved',  date: '25 Feb 2026', giftCode: 'SWG-K8PQ-3LMN' },
-  { id: 'EG005', userId: 'U011', userName: 'Aditya Bhatt',    brand: 'Amazon',   amount: 5000, points: 5000, status: 'pending',   date: '24 Feb 2026' },
-  { id: 'EG006', userId: 'U005', userName: 'Vikram Singh',    brand: 'Spotify',  amount: 349,  points: 349,  status: 'rejected',  date: '23 Feb 2026' },
-  { id: 'EG007', userId: 'U009', userName: 'Karan Verma',     brand: 'Uber',     amount: 1000, points: 1000, status: 'pending',   date: '22 Feb 2026' },
-  { id: 'EG008', userId: 'U001', userName: 'Rahul Sharma',    brand: 'Flipkart', amount: 1000, points: 1000, status: 'completed' as any, date: '28 Dec 2025', giftCode: 'FK-X92K-7TP4' },
+  { id: 'EG001', userId: 'U001', userName: 'Rahul Sharma',  brand: 'Amazon',   amount: 500,  points: 500,  status: 'completed', date: '28 Feb 2026', giftCode: 'AMZN-7X4K-9P2M' },
+  { id: 'EG002', userId: 'U003', userName: 'Arjun Nair',    brand: 'Flipkart', amount: 2000, points: 2000, status: 'completed', date: '27 Feb 2026', giftCode: 'FK-93JK-LM2P'   },
+  { id: 'EG003', userId: 'U007', userName: 'Rohit Mehta',   brand: 'Netflix',  amount: 1000, points: 1000, status: 'completed', date: '26 Feb 2026', giftCode: 'NFX-PP2Q-8NMR'  },
+  { id: 'EG004', userId: 'U002', userName: 'Priya Patel',   brand: 'Swiggy',   amount: 500,  points: 500,  status: 'completed', date: '25 Feb 2026', giftCode: 'SWG-K8PQ-3LMN'  },
+  { id: 'EG005', userId: 'U011', userName: 'Aditya Bhatt',  brand: 'Amazon',   amount: 5000, points: 5000, status: 'completed', date: '24 Feb 2026', giftCode: 'AMZN-QR7T-5VXZ' },
+  { id: 'EG006', userId: 'U005', userName: 'Vikram Singh',  brand: 'Spotify',  amount: 349,  points: 349,  status: 'failed',    date: '23 Feb 2026' },
+  { id: 'EG007', userId: 'U009', userName: 'Karan Verma',   brand: 'Uber',     amount: 1000, points: 1000, status: 'completed', date: '22 Feb 2026', giftCode: 'UBR-CX4M-7KPL'  },
+  { id: 'EG008', userId: 'U001', userName: 'Rahul Sharma',  brand: 'Flipkart', amount: 1000, points: 1000, status: 'completed', date: '28 Dec 2025', giftCode: 'FK-X92K-7TP4'    },
 ];
 
 export const TRANSFER_REQUESTS: TransferRequest[] = [
-  { id: 'TR001', userId: 'U003', userName: 'Arjun Nair',   bankName: 'HDFC Bank',            account: '••••2341', ifsc: 'HDFC0001234', amount: 75000,  status: 'pending',     date: '27 Feb 2026' },
-  { id: 'TR002', userId: 'U011', userName: 'Aditya Bhatt', bankName: 'ICICI Bank',           account: '••••8821', ifsc: 'ICIC0005678', amount: 100000, status: 'pending',     date: '25 Feb 2026' },
-  { id: 'TR003', userId: 'U007', userName: 'Rohit Mehta',  bankName: 'Axis Bank',            account: '••••4412', ifsc: 'UTIB0009012', amount: 50000,  status: 'approved',    date: '20 Feb 2026', approvedBy: 'Ayesha Khan' },
-  { id: 'TR004', userId: 'U005', userName: 'Vikram Singh', bankName: 'SBI',                  account: '••••7890', ifsc: 'SBIN0003456', amount: 75000,  status: 'transferred', date: '15 Feb 2026', approvedBy: 'Suresh Rao' },
-  { id: 'TR005', userId: 'U001', userName: 'Rahul Sharma', bankName: 'State Bank of India',  account: '••••4521', ifsc: 'SBIN0001234', amount: 50000,  status: 'rejected',    date: '15 Jan 2026' },
-  { id: 'TR006', userId: 'U001', userName: 'Rahul Sharma', bankName: 'State Bank of India',  account: '••••4521', ifsc: 'SBIN0001234', amount: 75000,  status: 'transferred', date: '01 Nov 2025', approvedBy: 'Ayesha Khan' },
+  { id: 'TR001', userId: 'U003', userName: 'Arjun Nair',   bankName: 'HDFC Bank',           account: '••••2341', ifsc: 'HDFC0001234', amount: 75000,  status: 'transferred', date: '27 Feb 2026' },
+  { id: 'TR002', userId: 'U011', userName: 'Aditya Bhatt', bankName: 'ICICI Bank',          account: '••••8821', ifsc: 'ICIC0005678', amount: 100000, status: 'transferred', date: '25 Feb 2026' },
+  { id: 'TR003', userId: 'U007', userName: 'Rohit Mehta',  bankName: 'Axis Bank',           account: '••••4412', ifsc: 'UTIB0009012', amount: 50000,  status: 'transferred', date: '20 Feb 2026' },
+  { id: 'TR004', userId: 'U005', userName: 'Vikram Singh', bankName: 'SBI',                 account: '••••7890', ifsc: 'SBIN0003456', amount: 75000,  status: 'transferred', date: '15 Feb 2026' },
+  { id: 'TR005', userId: 'U001', userName: 'Rahul Sharma', bankName: 'State Bank of India', account: '••••4521', ifsc: 'SBIN0001234', amount: 50000,  status: 'failed',      date: '15 Jan 2026' },
+  { id: 'TR006', userId: 'U001', userName: 'Rahul Sharma', bankName: 'State Bank of India', account: '••••4521', ifsc: 'SBIN0001234', amount: 75000,  status: 'transferred', date: '01 Nov 2025' },
 ];
 
 export const ADMIN_PRODUCTS: AdminProduct[] = [
-  { id: 'P001', name: 'Amazon Gift Card',  brand: 'Amazon',  category: 'Shopping',       minPts: 500,  maxPts: 10000, active: true,  sortOrder: 1 },
-  { id: 'P002', name: 'Flipkart Gift Card',brand: 'Flipkart',category: 'Shopping',       minPts: 500,  maxPts: 5000,  active: true,  sortOrder: 2 },
-  { id: 'P003', name: 'Netflix Gift Card', brand: 'Netflix', category: 'Entertainment',  minPts: 500,  maxPts: 3000,  active: true,  sortOrder: 3 },
-  { id: 'P004', name: 'Swiggy Gift Card',  brand: 'Swiggy',  category: 'Food',           minPts: 200,  maxPts: 2000,  active: true,  sortOrder: 4 },
-  { id: 'P005', name: 'Spotify Premium',   brand: 'Spotify', category: 'Entertainment',  minPts: 119,  maxPts: 1189,  active: true,  sortOrder: 5 },
-  { id: 'P006', name: 'Uber Gift Card',    brand: 'Uber',    category: 'Travel',         minPts: 250,  maxPts: 2000,  active: true,  sortOrder: 6 },
-  { id: 'P007', name: 'Zomato Gift Card',  brand: 'Zomato',  category: 'Food',           minPts: 200,  maxPts: 2000,  active: false, sortOrder: 7 },
-  { id: 'P008', name: 'MakeMyTrip Voucher',brand: 'MMT',     category: 'Travel',         minPts: 1000, maxPts: 10000, active: false, sortOrder: 8 },
+  { id: 'P001', name: 'Amazon Gift Card',  brand: 'Amazon',  category: 'Shopping',      minPts: 500,  maxPts: 10000, active: true,  sortOrder: 1 },
+  { id: 'P002', name: 'Flipkart Gift Card',brand: 'Flipkart',category: 'Shopping',      minPts: 500,  maxPts: 5000,  active: true,  sortOrder: 2 },
+  { id: 'P003', name: 'Netflix Gift Card', brand: 'Netflix', category: 'Entertainment', minPts: 500,  maxPts: 3000,  active: true,  sortOrder: 3 },
+  { id: 'P004', name: 'Swiggy Gift Card',  brand: 'Swiggy',  category: 'Food',          minPts: 200,  maxPts: 2000,  active: true,  sortOrder: 4 },
+  { id: 'P005', name: 'Spotify Premium',   brand: 'Spotify', category: 'Entertainment', minPts: 119,  maxPts: 1189,  active: true,  sortOrder: 5 },
+  { id: 'P006', name: 'Uber Gift Card',    brand: 'Uber',    category: 'Travel',        minPts: 250,  maxPts: 2000,  active: true,  sortOrder: 6 },
+  { id: 'P007', name: 'Zomato Gift Card',  brand: 'Zomato',  category: 'Food',          minPts: 200,  maxPts: 2000,  active: false, sortOrder: 7 },
+  { id: 'P008', name: 'MakeMyTrip Voucher',brand: 'MMT',     category: 'Travel',        minPts: 1000, maxPts: 10000, active: false, sortOrder: 8 },
+];
+
+export const REGISTRATION_REQUESTS: RegistrationRequest[] = [
+  { id: 'R001', firstName: 'Tanvi',   lastName: 'Desai',    email: 'tanvi.desai@example.com',    contact: '+91 98001 11222', college: 'Gujarat University',    year: '2nd Year', pan: 'AABCD1234E', submittedDate: '22 Apr 2026', status: 'pending'  },
+  { id: 'R002', firstName: 'Nikhil',  lastName: 'Tiwari',   email: 'nikhil.tiwari@example.com',  contact: '+91 97002 22333', college: 'BHU Varanasi',           year: '3rd Year', pan: 'BBCDE2345F', submittedDate: '21 Apr 2026', status: 'pending'  },
+  { id: 'R003', firstName: 'Pooja',   lastName: 'Menon',    email: 'pooja.menon@example.com',    contact: '+91 96003 33444', college: 'MG University Kerala',   year: '1st Year', pan: 'CCCDE3456G', submittedDate: '20 Apr 2026', status: 'pending'  },
+  { id: 'R004', firstName: 'Sameer',  lastName: 'Qureshi',  email: 'sameer.q@example.com',       contact: '+91 95004 44555', college: 'Osmania University',     year: '4th Year', pan: 'DDDCE4567H', submittedDate: '19 Apr 2026', status: 'pending'  },
+  { id: 'R005', firstName: 'Lavanya', lastName: 'Iyer',     email: 'lavanya.iyer@example.com',   contact: '+91 94005 55666', college: 'Anna University',        year: '2nd Year', pan: 'EEEDF5678I', submittedDate: '18 Apr 2026', status: 'pending'  },
+  { id: 'R006', firstName: 'Aryan',   lastName: 'Kapoor',   email: 'aryan.kapoor@example.com',   contact: '+91 93006 66777', college: 'DU South Campus',        year: '3rd Year', pan: 'FFFEG6789J', submittedDate: '15 Apr 2026', status: 'approved' },
+  { id: 'R007', firstName: 'Shruti',  lastName: 'Varma',    email: 'shruti.varma@example.com',   contact: '+91 92007 77888', college: 'NIT Calicut',            year: '2nd Year', pan: 'GGGFH7890K', submittedDate: '14 Apr 2026', status: 'approved' },
+  { id: 'R008', firstName: 'Dev',     lastName: 'Malhotra', email: 'dev.malhotra@example.com',   contact: '+91 91008 88999', college: 'Symbiosis Pune',         year: '1st Year', pan: 'HHHGI8901L', submittedDate: '12 Apr 2026', status: 'rejected', rejectionReason: 'PAN document unclear' },
 ];
 
 export const AUDIT_LOG: AuditEntry[] = [
-  { id: 'AL001', action: 'Points Awarded',    admin: 'Ayesha Khan', target: 'Rahul Sharma',    details: '+2,500 pts — Q1 sales target',        date: '10 Feb 2026 14:32', type: 'points'   },
-  { id: 'AL002', action: 'Points Awarded',    admin: 'Ayesha Khan', target: 'Arjun Nair',      details: '+5,000 pts — Best performer Jan',      date: '05 Feb 2026 11:15', type: 'points'   },
-  { id: 'AL003', action: 'eGift Approved',    admin: 'Suresh Rao',  target: 'Priya Patel',     details: 'Swiggy ₹500 — SWG-K8PQ-3LMN',        date: '25 Feb 2026 16:08', type: 'approval' },
-  { id: 'AL004', action: 'Transfer Approved', admin: 'Ayesha Khan', target: 'Rohit Mehta',     details: '₹50,000 — UTIB0009012',               date: '20 Feb 2026 10:44', type: 'approval' },
-  { id: 'AL005', action: 'CSV Upload',        admin: 'Suresh Rao',  target: '12 users',        details: 'Bulk award — Feb campaign batch',      date: '14 Feb 2026 09:00', type: 'csv'      },
-  { id: 'AL006', action: 'User Suspended',    admin: 'Ayesha Khan', target: 'Divya Krishnan',  details: 'Reason: policy violation',             date: '12 Feb 2026 17:22', type: 'user'     },
-  { id: 'AL007', action: 'Product Disabled',  admin: 'Suresh Rao',  target: 'Zomato Gift Card',details: 'Stock exhausted — temporarily paused', date: '10 Feb 2026 12:00', type: 'product'  },
-  { id: 'AL008', action: 'eGift Rejected',    admin: 'Ayesha Khan', target: 'Vikram Singh',    details: 'Spotify ₹349 — balance insufficient',  date: '23 Feb 2026 15:30', type: 'approval' },
-  { id: 'AL009', action: 'Transfer Rejected', admin: 'Suresh Rao',  target: 'Rahul Sharma',    details: '₹50,000 — unverified bank details',   date: '15 Jan 2026 11:05', type: 'approval' },
-  { id: 'AL010', action: 'Points Awarded',    admin: 'Suresh Rao',  target: 'Vikram Singh',    details: '+4,000 pts — event management',        date: '10 Jan 2026 10:20', type: 'points'   },
-  { id: 'AL011', action: 'User Activated',    admin: 'Ayesha Khan', target: 'Karan Verma',     details: 'Account re-enabled after review',      date: '08 Jan 2026 14:00', type: 'user'     },
-  { id: 'AL012', action: 'CSV Upload',        admin: 'Ayesha Khan', target: '8 users',         details: 'Bulk award — Jan new members',         date: '03 Jan 2026 09:30', type: 'csv'      },
+  { id: 'AL001', action: 'Points Awarded',      admin: 'Ayesha Khan', target: 'Rahul Sharma',    details: '+2,500 pts — Q1 sales target',            date: '10 Feb 2026 14:32', type: 'points'   },
+  { id: 'AL002', action: 'Points Awarded',      admin: 'Ayesha Khan', target: 'Arjun Nair',      details: '+5,000 pts — Best performer Jan',          date: '05 Feb 2026 11:15', type: 'points'   },
+  { id: 'AL003', action: 'Registration Approved', admin: 'Suresh Rao', target: 'Aryan Kapoor',   details: 'New ambassador account activated',         date: '15 Apr 2026 10:22', type: 'approval' },
+  { id: 'AL004', action: 'Registration Rejected', admin: 'Ayesha Khan', target: 'Dev Malhotra',  details: 'Reason: PAN document unclear',             date: '12 Apr 2026 15:44', type: 'approval' },
+  { id: 'AL005', action: 'CSV Upload',          admin: 'Suresh Rao',  target: '12 users',        details: 'Bulk award — Feb campaign batch',          date: '14 Feb 2026 09:00', type: 'csv'      },
+  { id: 'AL006', action: 'User Suspended',      admin: 'Ayesha Khan', target: 'Divya Krishnan',  details: 'Reason: policy violation',                 date: '12 Feb 2026 17:22', type: 'user'     },
+  { id: 'AL007', action: 'Product Disabled',    admin: 'Suresh Rao',  target: 'Zomato Gift Card',details: 'Stock exhausted — temporarily paused',     date: '10 Feb 2026 12:00', type: 'product'  },
+  { id: 'AL008', action: 'Registration Approved', admin: 'Ayesha Khan', target: 'Shruti Varma',  details: 'New ambassador account activated',         date: '14 Apr 2026 11:30', type: 'approval' },
+  { id: 'AL009', action: 'Points Awarded',      admin: 'Suresh Rao',  target: 'Vikram Singh',    details: '+4,000 pts — event management',            date: '10 Jan 2026 10:20', type: 'points'   },
+  { id: 'AL010', action: 'User Activated',      admin: 'Ayesha Khan', target: 'Karan Verma',     details: 'Account re-enabled after review',          date: '08 Jan 2026 14:00', type: 'user'     },
+  { id: 'AL011', action: 'CSV Upload',          admin: 'Ayesha Khan', target: '8 users',         details: 'Bulk award — Jan new members',             date: '03 Jan 2026 09:30', type: 'csv'      },
+  { id: 'AL012', action: 'Points Awarded',      admin: 'Ayesha Khan', target: 'Aditya Bhatt',    details: '+10,000 pts — Top referral Q4 FY25',       date: '15 Jan 2026 09:00', type: 'points'   },
 ];

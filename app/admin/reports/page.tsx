@@ -26,12 +26,11 @@ function buildCsv(type: ReportType): string {
       `Lifetime Earned,${s.lifetimeEarned}`,
       `Consumed (Redeemed),${s.consumedPoints}`,
       `Expired,${s.expiredPoints}`,
-      `Bank Transfer Allowance,${s.allowanceBankTransfer}`,
-      `Gift Card Allowance,${s.allowanceGiftCard}`,
+      `Bank Transfer Wallet,${s.walletBankTransfer}`,
+      `Gift Card Wallet,${s.walletGiftCard}`,
       `This Month Awarded,${s.monthlyAwarded}`,
       `This Month Redeemed,${s.monthlyRedeemed}`,
-      `Pending Bank Transfers,${s.pendingBankTransfers}`,
-      `Pending eGift,${s.pendingEGift}`,
+      `Pending Registrations,${s.pendingRegistrations}`,
     ].join('\n');
   }
   if (type === 'users') {
@@ -56,9 +55,9 @@ function buildCsv(type: ReportType): string {
     return [header, ...rows].join('\n');
   }
   if (type === 'transfers') {
-    const header = 'ID,User ID,User Name,Bank Name,Account,IFSC,Amount,Status,Date,Approved By';
+    const header = 'ID,User ID,User Name,Bank Name,Account,IFSC,Amount,Status,Date';
     const rows = TRANSFER_REQUESTS.map(r =>
-      `${r.id},${r.userId},${r.userName},${r.bankName},${r.account},${r.ifsc},${r.amount},${r.status},${r.date},${r.approvedBy || ''}`
+      `${r.id},${r.userId},${r.userName},${r.bankName},${r.account},${r.ifsc},${r.amount},${r.status},${r.date}`
     );
     return [header, ...rows].join('\n');
   }
@@ -171,7 +170,7 @@ export default function ReportsPage() {
               { l: 'Expired',            v: fmt(ADMIN_STATS.expiredPoints) },
               { l: 'Monthly Awarded',    v: fmt(ADMIN_STATS.monthlyAwarded) },
               { l: 'Monthly Redeemed',   v: fmt(ADMIN_STATS.monthlyRedeemed) },
-              { l: 'Pending Requests',   v: String(ADMIN_STATS.pendingBankTransfers + ADMIN_STATS.pendingEGift) },
+              { l: 'Pending Registrations', v: String(ADMIN_STATS.pendingRegistrations) },
             ].map(s => (
               <div key={s.l} style={{ background: '#FAFAFE', border: '1px solid #E8E6F8', borderRadius: 10, padding: '12px 14px' }}>
                 <div style={{ fontSize: 10.5, fontWeight: 700, color: '#A8A5C8', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 5 }}>{s.l}</div>
