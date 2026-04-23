@@ -46,7 +46,7 @@ export default function ProfileScreen() {
   return (
     <div className="screen screen-enter">
       {/* Gradient header */}
-      <div style={{ background: 'linear-gradient(150deg,#A29AFF,#E66BFF,#FFA29B)', padding: '60px 20px 28px' }}>
+      <div className="screen-hero" style={{ background: 'linear-gradient(150deg,#A29AFF,#E66BFF,#FFA29B)' }}>
         <div style={{ marginBottom: 18 }}>
           <div style={{ fontSize: 22, fontWeight: 700, color: 'white' }}>Profile</div>
         </div>
