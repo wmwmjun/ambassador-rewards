@@ -76,6 +76,16 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Demo links */}
+        <div style={{ padding: '0 12px', marginTop: 'auto' }}>
+          <a href="/register" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', borderRadius: 10, textDecoration: 'none', color: '#A8A5C8', fontSize: 13.5, fontWeight: 600, marginBottom: 4 }}>
+            <Icon name="user" size={17} color="#A8A5C8" sw={1.8} /> Register
+          </a>
+          <a href="/admin" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', borderRadius: 10, textDecoration: 'none', color: '#A8A5C8', fontSize: 13.5, fontWeight: 600, marginBottom: 8 }}>
+            <Icon name="shield" size={17} color="#A8A5C8" sw={1.8} /> Admin Panel
+          </a>
+        </div>
+
         {/* User */}
         <div className="sidebar-user">
           <Avatar initial="R" size={36} />
