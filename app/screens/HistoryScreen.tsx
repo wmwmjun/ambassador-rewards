@@ -19,7 +19,7 @@ export default function HistoryScreen() {
 
   return (
     <div className="screen screen-enter">
-      <div style={{ background: 'linear-gradient(150deg,#91C6FF,#A29AFF)', padding: '60px 20px 24px' }}>
+      <div className="screen-hero" style={{ background: 'linear-gradient(150deg,#91C6FF,#A29AFF)' }}>
         <div style={{ fontSize: 22, fontWeight: 700, color: 'white' }}>History</div>
       </div>
 

@@ -141,7 +141,7 @@ export default function RedeemScreen({ onNavigate }: { onNavigate: (s: Screen) =
   // ── Main Redeem view ─────────────────────────────────────────
   return (
     <div className="screen screen-enter">
-      <div style={{ background: 'linear-gradient(150deg,#A29AFF,#E66BFF)', padding: '60px 20px 20px' }}>
+      <div className="screen-hero" style={{ background: 'linear-gradient(150deg,#A29AFF,#E66BFF)' }}>
         <div style={{ fontSize: 22, fontWeight: 700, color: 'white', marginBottom: 2 }}>Redeem</div>
         <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.65)' }}>
           Balance: <strong style={{ color: 'white' }}>{fmt(MOCK_BALANCE.current)} pts</strong>
@@ -187,7 +187,7 @@ export default function RedeemScreen({ onNavigate }: { onNavigate: (s: Screen) =
               ))}
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+            <div className="gift-grid">
               {filtered.map(g => (
                 <div
                   key={g.id}
