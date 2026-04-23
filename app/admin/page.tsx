@@ -29,35 +29,35 @@ export default function AdminDashboard() {
 
       {/* Users + Points summary */}
       <div className="admin-stats">
-        <Stat label="Total ambassadors" value={fmt(s.totalUsers)} sub="Active registrations" />
-        <Stat label="Current valid points" value={fmt(s.currentValidPoints)} sub="1 pt = ₹1" accent />
-        <Stat label="Expiring in 30 days" value={fmt(s.expiringIn30d)} sub="Needs attention" />
-        <Stat label="Pending requests" value={String(s.pendingBankTransfers + s.pendingEGift)} sub={`${s.pendingEGift} eGift · ${s.pendingBankTransfers} transfers`} />
+        <Stat label="Total ambassadors"       value={fmt(s.totalUsers)}          sub="Active registrations" />
+        <Stat label="Current valid points"    value={fmt(s.currentValidPoints)}  sub="1 pt = ₹1" accent />
+        <Stat label="Expiring in 30 days"     value={fmt(s.expiringIn30d)}       sub="Needs attention" />
+        <Stat label="Pending registrations"   value={String(s.pendingRegistrations)} sub="Awaiting review" />
       </div>
 
       {/* Lifetime summary */}
       <div style={{ marginBottom: 8, fontSize: 11, fontWeight: 700, color: '#A8A5C8', letterSpacing: '0.07em', textTransform: 'uppercase' }}>Lifetime points summary</div>
       <div className="admin-stats" style={{ gridTemplateColumns: 'repeat(3,1fr)', marginBottom: 24 }}>
-        <Stat label="Lifetime earned" value={fmt(s.lifetimeEarned)} />
-        <Stat label="Consumed (redeemed)" value={fmt(s.consumedPoints)} />
-        <Stat label="Expired" value={fmt(s.expiredPoints)} />
+        <Stat label="Lifetime earned"      value={fmt(s.lifetimeEarned)} />
+        <Stat label="Consumed (redeemed)"  value={fmt(s.consumedPoints)} />
+        <Stat label="Expired"              value={fmt(s.expiredPoints)} />
       </div>
 
-      {/* Allowance + monthly */}
+      {/* Wallet + monthly */}
       <div className="admin-stats" style={{ marginBottom: 24 }}>
-        <Stat label="Bank transfer allowance" value={`₹${fmt(s.allowanceBankTransfer)}`} sub="Remaining deposit" />
-        <Stat label="Gift card allowance"      value={`₹${fmt(s.allowanceGiftCard)}`}      sub="Remaining deposit" />
-        <Stat label="This month — awarded"     value={fmt(s.monthlyAwarded)}                sub="Points issued" />
-        <Stat label="This month — redeemed"    value={fmt(s.monthlyRedeemed)}               sub="Points used" />
+        <Stat label="Bank transfer wallet" value={`₹${fmt(s.walletBankTransfer)}`} sub="Pre-funded balance" />
+        <Stat label="Gift card wallet"     value={`₹${fmt(s.walletGiftCard)}`}     sub="Pre-funded balance" />
+        <Stat label="This month — awarded" value={fmt(s.monthlyAwarded)}            sub="Points issued" />
+        <Stat label="This month — redeemed" value={fmt(s.monthlyRedeemed)}          sub="Points used" />
       </div>
 
       {/* Quick links */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 14, marginBottom: 28 }}>
         {[
-          { href: '/admin/egift',     icon: 'gift' as const,      label: 'eGift requests',       count: s.pendingEGift,            color: '#A830C4' },
-          { href: '/admin/transfers', icon: 'bank' as const,      label: 'Transfer requests',    count: s.pendingBankTransfers,    color: '#1A6FC5' },
-          { href: '/admin/points',    icon: 'wallet' as const,    label: 'Award points',         count: null,                      color: '#7B72E8' },
-          { href: '/admin/users',     icon: 'users' as const,     label: 'Manage users',         count: null,                      color: '#1A8C3C' },
+          { href: '/admin/registrations', icon: 'shield' as const,  label: 'Registration approvals', count: s.pendingRegistrations, color: '#7B72E8' },
+          { href: '/admin/points',        icon: 'wallet' as const,  label: 'Award points',           count: null,                   color: '#A830C4' },
+          { href: '/admin/egift',         icon: 'gift' as const,    label: 'eGift transactions',     count: null,                   color: '#1A6FC5' },
+          { href: '/admin/transfers',     icon: 'bank' as const,    label: 'Bank transfers',         count: null,                   color: '#1A8C3C' },
         ].map(q => (
           <Link key={q.href} href={q.href} style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 14, background: 'white', borderRadius: 14, border: '1px solid #E8E6F8', padding: '16px 20px', transition: 'border-color 0.13s', cursor: 'pointer' }}>
             <div style={{ width: 40, height: 40, borderRadius: 11, background: `${q.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -65,7 +65,11 @@ export default function AdminDashboard() {
             </div>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1740' }}>{q.label}</div>
-              {q.count !== null && <div style={{ fontSize: 12, color: '#A8A5C8', marginTop: 2 }}>{q.count} pending</div>}
+              {q.count !== null && (
+                <div style={{ fontSize: 12, color: '#7B72E8', marginTop: 2, fontWeight: 600 }}>
+                  {q.count} pending
+                </div>
+              )}
             </div>
             <Icon name="chevron-right" size={16} color="#D0CEEA" />
           </Link>

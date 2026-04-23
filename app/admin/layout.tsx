@@ -5,14 +5,15 @@ import Icon from '@/app/components/Icon';
 import type { IconName } from '@/app/components/Icon';
 
 const NAV: { href: string; label: string; icon: IconName }[] = [
-  { href: '/admin',             label: 'Dashboard',  icon: 'dashboard'  },
-  { href: '/admin/users',       label: 'Users',      icon: 'users'      },
-  { href: '/admin/points',      label: 'Points',     icon: 'wallet'     },
-  { href: '/admin/egift',       label: 'eGift',      icon: 'gift'       },
-  { href: '/admin/transfers',   label: 'Transfers',  icon: 'bank'       },
-  { href: '/admin/products',    label: 'Products',   icon: 'layers'     },
-  { href: '/admin/reports',     label: 'Reports',    icon: 'file-text'  },
-  { href: '/admin/audit',       label: 'Audit Log',  icon: 'log'        },
+  { href: '/admin',                  label: 'Dashboard',    icon: 'dashboard'  },
+  { href: '/admin/registrations',    label: 'Registrations',icon: 'shield'     },
+  { href: '/admin/users',            label: 'Users',        icon: 'users'      },
+  { href: '/admin/points',           label: 'Points',       icon: 'wallet'     },
+  { href: '/admin/egift',            label: 'eGift',        icon: 'gift'       },
+  { href: '/admin/transfers',        label: 'Transfers',    icon: 'bank'       },
+  { href: '/admin/products',         label: 'Products',     icon: 'layers'     },
+  { href: '/admin/reports',          label: 'Reports',      icon: 'file-text'  },
+  { href: '/admin/audit',            label: 'Audit Log',    icon: 'log'        },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
